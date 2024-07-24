@@ -58,15 +58,6 @@ prepare_buffer(char *buffer, size_t *offsets, size_t *sizes)
 int
 main()
 {
-  Display *display;
-  Window window;
-
-  if (!(display = XOpenDisplay(NULL))) {
-    fprintf(stderr, "Failed to open display");
-    return EXIT_FAILURE;
-  }
-  window = XDefaultRootWindow(display);
-
   char buffer[MAX];
   size_t offsets[ELEMENTS];
   size_t sizes[ELEMENTS];
@@ -100,11 +91,7 @@ main()
       buffer[offset + size] = ' ';
       hash = tiny_hash(buffer + offset, size);
       if (hash != hashes[i]) {
-        if (XStoreName(display, window, buffer) < 0) {
-          fprintf(stderr, "Failed to store statusbar");
-          return EXIT_FAILURE;
-        }
-        XFlush(display);
+        puts(buffer);
         hashes[i] = hash;
       }
     }
