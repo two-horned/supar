@@ -14,21 +14,19 @@ struct component {
 #include "config.h"
 
 #define MAX 256
-#define SEED 127
 #define ELEMENTS sizeof(status) / sizeof(Component)
 
-static int tiny_hash(void *userdata, size_t size);
+static unsigned int tiny_hash(void *userdata, size_t size);
 static int prepare_buffer(char *buf, size_t *os, size_t *ss);
 
-int
+unsigned int
 tiny_hash(void *userdata, size_t size)
 {
-  const int magic = sizeof(int) * 8 - 7;
-  unsigned char *blocks = userdata;
-  int hash = SEED;
+  unsigned int hash = 0;
+  int c;
 
-  for (size_t i = 0; i < size; i ++)
-    hash ^= blocks[i] << (hash % magic);
+  for (size_t i = 0; i < size; ++i)
+    hash ^= (hash - c) << ((hash + c) & 31);
 
   return hash;
 }
@@ -79,7 +77,7 @@ main()
   
   size_t offset;
   size_t size;
-  int hash;
+  unsigned int hash;
   int hashes[ELEMENTS];
   milli_t counter[ELEMENTS];
   for (;;) {
