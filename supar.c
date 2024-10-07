@@ -23,10 +23,10 @@ unsigned int
 tiny_hash(void *userdata, size_t size)
 {
   unsigned int hash = 0;
-  int c;
+  unsigned char *blocks = userdata;
 
   for (size_t i = 0; i < size; ++i)
-    hash ^= (hash - c) << ((hash + c) & 31);
+    hash ^= (hash - blocks[i]) << ((hash + blocks[i]) & 31);
 
   return hash;
 }
@@ -78,7 +78,7 @@ main()
   size_t offset;
   size_t size;
   unsigned int hash;
-  int hashes[ELEMENTS];
+  unsigned int hashes[ELEMENTS];
   milli_t counter[ELEMENTS];
   for (;;) {
     for (size_t i = 0; i < ELEMENTS; i++) {
