@@ -14,6 +14,7 @@ struct component {
 #include "config.h"
 
 #define MAX 256
+#define LIMIT(a) a < MAX ? MAX - a : 0
 #define ELEMENTS sizeof(status) / sizeof(Component)
 
 static unsigned int tiny_hash(void *userdata, size_t size);
@@ -38,7 +39,7 @@ prepare_buffer(char *buffer, size_t *offsets, size_t *sizes)
   for (size_t i = 0; i < ELEMENTS; i++) {
     offset += snprintf(
         buffer + offset,
-        MAX - offset,
+        LIMIT(offset),
         "^b%s^ ^b%s^ %s",
         background,
         status[i].background,
@@ -46,12 +47,12 @@ prepare_buffer(char *buffer, size_t *offsets, size_t *sizes)
         );
     
     offsets[i] = offset;
-    sizes[i] = status[i].snprintf_comp(buffer + offset, MAX - offset);
+    sizes[i] = status[i].snprintf_comp(buffer + offset, LIMIT(offset));
 
     offset += sizes[i];
-    offset += snprintf(buffer + offset, MAX - offset, " ");
+    offset += snprintf(buffer + offset, LIMIT(offset), " ");
   }
-  return 2 < snprintf(buffer + offset, MAX - offset, "^d^");
+  return 2 < snprintf(buffer + offset, LIMIT(offset), "^d^");
 }
 
 
@@ -87,7 +88,7 @@ main()
 
       counter[i] = 0;
       offset = offsets[i];
-      size = status[i].snprintf_comp(buffer + offset, MAX - offset);
+      size = status[i].snprintf_comp(buffer + offset, LIMIT(offset));
       if (size != sizes[i]) {
         fprintf(stderr, "Statusbar size changed");
 
